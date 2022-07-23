@@ -21,6 +21,8 @@ public class PlayerShooting : MonoBehaviour
     public Light faceLight;
     float effectsDisplayTime = 0.2f;
 
+    private HealthOfNPC _healthOfNPC;
+
     void Awake()
     {
         // Берем индекс слоя Shootable
@@ -31,8 +33,10 @@ public class PlayerShooting : MonoBehaviour
         gunAudio = GetComponent<AudioSource>();
         gunLight = GetComponent<Light>();
 
-      
+
         //faceLight = GetComponentInChildren<Light> ();
+
+        _healthOfNPC = GetComponentInParent<HealthOfNPC>();
     }
 
 
@@ -71,7 +75,7 @@ public class PlayerShooting : MonoBehaviour
     {
         timer = 0f;
 
-        gunAudio.Play();
+        //gunAudio.Play();
 
         // Включаем всвет
         gunLight.enabled = true;
@@ -89,9 +93,12 @@ public class PlayerShooting : MonoBehaviour
 
         if (Physics.Raycast(shootRay, out shootHit, range))
         {
+            if(shootHit.collider.GetComponentInParent<HealthOfNPC>())
+            {
+                shootHit.collider.GetComponentInParent<HealthOfNPC>().GetDamage(10, _healthOfNPC);
+            }
 
-
-            if (shootHit.collider.GetComponent<Rigidbody>())
+            else if (shootHit.collider.GetComponent<Rigidbody>())
             {
                 shootHit.collider.GetComponent<Rigidbody>().AddForce(transform.forward * 300);
             }
